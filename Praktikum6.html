@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>PRAKTIKUM 6_164221019_Ditha Meiga Zakaria</title>
+        <style>
+            :root {
+                --gradient-angle: 90deg; 
+            }
+            body {
+                background: linear-gradient(var(--gradient-angle), #c3faff, #f8d8ff);
+                font-family:'Courier New', Courier, monospace;
+            }
+            h1 {font-size: 200%;
+                text-align: center;
+            }
+            h2 {font-size: 150%;
+                text-align: center;
+            }
+            hr {border-width: 4px;
+                border-color: rgb(9, 33, 63);
+                margin-top: 20px;
+                margin-bottom: 20px;
+            }
+            form {font-size: 120%;
+                text-align: center;
+            }
+            input[type="submit"] {
+                font-size: 70%;
+                background-color: #17617e;
+                color: white;
+                padding: 10px 30px; 
+                border: none; 
+                border-radius: 5px; 
+                cursor: pointer; 
+                margin-top: 25px;
+                margin-bottom: 25px;
+            }
+            input[type="submit"]:hover {
+                background-color: #b166c4;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>PRAKTIKUM 6</h1>
+        <h1>HTML-CSS-JavaScript</h1>
+        <h2>Ditha Meiga Zakaria</h2>
+        <h2>164221019</h2>
+        <hr>
+        <form id="form">
+            <strong><label for="input">Masukkan URL!</label></strong><br>
+            <input style="background-color: #c3faff; border-radius: 5px; font-size: 80%;" type="text" id="input" name="input"><br>
+            <input type="submit" value="Submit">
+        </form>
+
+        <div id="tableContainer" style="display: none;">
+            <table id="dataTable" border="1"></table>
+        </div>
+
+        <script>
+            document.getElementById("form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                var urlInput = document.getElementById("input").value; 
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", urlInput, true);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var data = JSON.parse(xhr.responseText);
+                        var dataTable = document.getElementById("dataTable");
+                        var tableContainer = document.getElementById("tableContainer");
+                        dataTable.innerHTML = '';
+
+                        var headerRow = document.createElement('tr');
+                        for (var key in data[0]) {
+                            if (data[0].hasOwnProperty(key)) {
+                                var headerCell = document.createElement('th');
+                                headerCell.textContent = key;
+                                headerCell.style.backgroundColor = '#3498db'; // Memberikan latar belakang warna biru pada header tabel
+                                headerRow.appendChild(headerCell);
+                            }
+                        }
+
+                        dataTable.appendChild(headerRow);
+
+                        data.forEach(function (item) {
+                            var dataRow = document.createElement('tr');
+                            for (var key in item) {
+                                if (item.hasOwnProperty(key)) {
+                                    var dataCell = document.createElement('td');
+                                    dataCell.textContent = item[key];
+                                    dataRow.appendChild(dataCell);
+                                }
+                            }
+                            dataTable.appendChild(dataRow);
+                        });
+
+                        tableContainer.style.display = 'block';
+
+                        var tableWidth = dataTable.offsetWidth;
+
+                        document.querySelector("body").style.backgroundSize = tableWidth + "px 100%";
+
+                        var hrElement = document.querySelector("hr");
+                        hrElement.style.width = tableWidth + "px";
+
+                        var h1Width = h1Element.offsetWidth;
+                        var h2Width = h2Elements[0].offsetWidth;
+                        var marginLeft = (tableWidth - h1Width) / 2;
+                        var marginRight = (tableWidth - h2Width) / 2;
+                        for (var i = 0; i < h2Elements.length; i++) {
+                            h1Element.style.marginLeft = marginLeft + "px";
+                            h1Element.style.marginRight = marginRight + "px";
+                        }
+                        for (var i = 0; i < h2Elements.length; i++) {
+                            h2Elements[i].style.marginLeft = marginLeft + "px";
+                            h2Elements[i].style.marginRight = marginRight + "px";
+                        }
+                    }
+
+                };
+                xhr.send();
+            });
+        </script>
+    </body>
+</html>
