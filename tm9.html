@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>tm9</title>
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 12px;
+      background-color: #c6f0ff;
+      text-align: center;
+    }
+    .container {
+      display:list-item;
+      width: 400px;
+      background: #fbecf9;
+      border-radius: 15px;
+      margin: auto;
+      padding: 10px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-weight: 800;
+      font-size: 300%;
+      color: #0c0652;
+    }
+    form {
+      width: 100% auto;
+      border-radius: 10px;
+    }
+
+    button {
+      font-weight: bold;
+      display: block;
+      margin: auto ;
+      padding: 10px 20px;
+      background-color: #2b1f65;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 12px;
+    }
+
+    button:hover {
+      background-color: #8174ad;
+    }
+
+    table {
+      width: 100% auto;
+      margin-top: 10px;
+      border-radius: 10px;
+      margin:auto;
+      background-color: #fbecf9;
+    }
+
+    th, td, tr {
+      border: 1px solid #2b1f65;
+      padding: 5px;
+      text-align: center;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    th {
+      background-color: #2b1f65;
+      color: #f9e0bb;
+    }
+
+  </style>
+</head>
+
+<body>
+  <h1>SELAMAT DATANG!</h1>
+
+  <div class=container>
+    <i><strong><p>Data: dithazkria.alwaysdata.net/datapribadi.csv</p></strong></i>
+    <button onclick="LihatData();">Lihat Tabel</button><br>
+
+    <form>
+      <label for="id">ID:</label>
+      <input type="text" id="id" name="id" required><br><br>
+      <label for="F_Name">First Name:</label>
+      <input type="text" id="F_Name" name="F_Name" required><br><br>
+      <label for="L_Name">Last Name:</label>
+      <input type="text" id="L_Name" name="L_Name" required><br><br>
+      <label for="email">Email:</label>
+      <input type="text" id="email" name="email" required><br><br>
+      <label for="email2">Email 2:</label>
+      <input type="text" id="email2" name="email2" required><br><br>
+      <label for="profesi">Profesi:</label>
+      <input type="text" id="profesi" name="profesi" required><br><br>
+    </form>
+
+    <button onclick="UpData();">Update Tabel</button><br>
+
+    <label for="search-input">Cari</label>
+    <input type="text" id="search-input" onkeyup="searchTable()" />
+  </div> 
+
+
+  <div id="table-container">
+    <table id="data-table">
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+    
+
+  <script>
+
+    let sortOrder = 1;
+
+    function UpData() {
+      const id = document.getElementById('id').value;
+      const F_Name = document.getElementById('F_Name').value;
+      const L_Name = document.getElementById('L_Name').value;
+      const email = document.getElementById('email').value;
+      const email2 = document.getElementById('email2').value;
+      const profesi = document.getElementById('profesi').value;
+    
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('F_Name', F_Name);
+      formData.append('L_Name', L_Name);
+      formData.append('email', email);
+      formData.append('email2', email2);
+      formData.append('profesi', profesi);
+    
+      fetch('formphp.php', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          LihatData();
+         });
+      }
+    
+    function LihatData() {
+      const urlInput = "https://dithazkria.alwaysdata.net/getcsv2json.php"; 
+      const tableContainer = document.getElementById('table-container');
+      const dataTable = document.getElementById('data-table');
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) { 
+         
+          tableData = JSON.parse(xhr.responseText);
+
+          dataTable.innerHTML = '';
+
+          const headerRow = document.createElement('tr'); 
+          for (const key in tableData[0]) {
+            if (tableData[0].hasOwnProperty(key)) {
+              const headerCell = document.createElement('th');
+              headerCell.textContent = key;
+              headerCell.addEventListener('click', function () {
+                sortTable(Array.from(headerRow.children).indexOf(headerCell));
+              });
+              headerRow.appendChild(headerCell);
+            }
+          }
+          dataTable.appendChild(headerRow);
+
+          tableData.forEach(function(item) {
+            const dataRow = document.createElement('tr');
+            for (const key in item) {
+              if (item.hasOwnProperty(key)) {
+                const dataCell = document.createElement('td');
+                dataCell.textContent = item[key];
+                dataRow.appendChild(dataCell);
+              }
+            }
+            dataTable.appendChild(dataRow);
+          });
+
+          tableContainer.style.display = 'block';
+        }
+      };
+
+      xhr.open('GET', urlInput, true);
+      xhr.send();
+    }
+
+    function sortTable(columnIndex) {
+      const table = document.getElementById('data-table');
+      const rows = Array.from(table.getElementsByTagName('tr'));
+      
+      // Hapus baris header
+      rows.shift();
+
+      rows.sort((a, b) => {
+        const aValue = a.getElementsByTagName('td')[columnIndex].textContent.trim();
+        const bValue = b.getElementsByTagName('td')[columnIndex].textContent.trim();
+
+        if (isNaN(aValue) || isNaN(bValue)) {
+          // Jika nilai bukan numerik, lakukan perbandingan string
+          return sortOrder * aValue.localeCompare(bValue);
+        } else {
+          // Jika nilai numerik, lakukan perbandingan numerik
+          return sortOrder * (parseFloat(aValue) - parseFloat(bValue));
+        }
+      });
+
+      // Ubah urutan baris dalam tabel
+      rows.forEach((row) => {
+        table.appendChild(row);
+      });
+
+      // Toggle urutan pengurutan untuk pengurutan berikutnya
+      sortOrder = -sortOrder;
+    }
+
+    function searchTable() {
+      const searchInput = document.getElementById('search-input').value.toLowerCase();
+      const dataTable = document.getElementById('data-table');
+      const rows = Array.from(dataTable.getElementsByTagName('tr'));
+
+      rows.shift();
+
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const rowText = Array.from(cells).map(cell => cell.textContent).join(' ').toLowerCase();
+        if (rowText.includes(searchInput)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    window.onload = () => {
+      LihatData();
+    }
+  </script>
+</body>
+</html>
