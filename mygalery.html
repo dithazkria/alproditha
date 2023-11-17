@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+    <head>
+        <title>My Galery</title>
+        <style>
+            body {
+                background-color: #f3bfbf;
+                text-align: center;  
+            }
+            .gallery-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 20px;
+            }
+
+            .gallery-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            }
+
+            .gallery-item {
+            margin: 10px;
+            overflow: hidden;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+            }
+
+            .gallery-item img {
+            width: 150px; 
+            height: auto; 
+            display: block;
+            border-radius: 10px;
+            }
+
+            .gallery-item:hover {
+            transform: scale(1.5);
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>MY GALERY</h1>
+        <div class="gallery-container" id="galleryContainer">
+            <div class="gallery-row" id="galleryRow1"></div>
+            <div class="gallery-row" id="galleryRow2"></div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+            const galleryContainer = document.getElementById('galleryContainer');
+            const galleryRow1 = document.getElementById('galleryRow1');
+            const galleryRow2 = document.getElementById('galleryRow2');
+
+            const images = [
+                '/static/image1.jpg',
+                '/static/image2.jpg',
+                '/static/image3.jpg',
+                '/static/image4.jpg',
+                '/static/image5.jpg',
+                '/static/image6.jpg'
+            ];
+
+            images.forEach((image, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+
+                const img = document.createElement('img');
+                img.src = image;
+                img.alt = 'Gallery Image';
+
+                galleryItem.appendChild(img);
+
+                if (index < 3) {
+                galleryRow1.appendChild(galleryItem);
+                } else {
+                galleryRow2.appendChild(galleryItem);
+                }
+            });
+            });
+        </script>
+    </body>
+</html>

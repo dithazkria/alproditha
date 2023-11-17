@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+    <head>
+        <title>Fibonacci</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f3bfbf;
+                color: #0c0c0c;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                text-align: center;  
+            }
+
+            #container {
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 12px;
+                box-shadow: #000;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            input {
+                padding: 8px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            button {
+                font-weight: bold;
+                padding: 10px;
+                font-size: 16px;
+                background-color: #f3bfbf;
+                cursor: pointer;
+                border-radius: 10px;
+                border: none;
+            }
+
+            button:hover {
+                background-color: #f06c6c;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h1>Deret Fibonacci</h1>
+            <form action="/fibonacci/" method="post">
+                <strong><label for="number">Masukkan Panjang Fibonacci:</label></strong>
+                <input type="number" id="number" name="number" required>
+                <button type="submit">Submit</button>
+            </form>
+            {% if 'number' in request.form %}
+                <h3>Deret Fibonacci dengan Panjang {{ request.form['number'] }}:</h3>
+                <h4>{{ result|join(' ') }}</h4>
+            {% endif %}
+        </div>
+    </body>
+</html>
